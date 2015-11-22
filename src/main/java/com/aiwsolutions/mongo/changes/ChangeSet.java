@@ -1,21 +1,22 @@
 package com.aiwsolutions.mongo.changes;
 
 import com.mongodb.Mongo;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * Created by camhoang on 11/22/15.
  */
 public abstract class ChangeSet {
-    private Mongo mongo;
+    private MongoDatabase mongoDatabase;
 
-    public Mongo getMongo() {
-        return mongo;
+    public MongoDatabase getMongoDatabase() {
+        return mongoDatabase;
     }
 
-    public ChangeSet setMongo(Mongo mongo) {
-        this.mongo = mongo;
+    public ChangeSet setMongoDatabase(MongoDatabase mongoDatabase) {
+        this.mongoDatabase = mongoDatabase;
         return this;
     }
 
-    public abstract void execute();
+    public abstract void run();
 }

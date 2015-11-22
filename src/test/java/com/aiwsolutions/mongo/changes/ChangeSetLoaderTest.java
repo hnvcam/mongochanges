@@ -3,13 +3,11 @@ package com.aiwsolutions.mongo.changes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -26,7 +24,7 @@ public class ChangeSetLoaderTest {
 
     @Test
     public void testLoadFilesFromPath() throws IOException {
-        List<File> files = changeSetLoader.loadFilesFromPath("changes");
+        List<File> files = changeSetLoader.loadChangeSetFilesFromPath("changes");
         assertThat(files.size(), is(1));
         assertThat(files.get(0).getName(), is("changeSet1.js"));
     }

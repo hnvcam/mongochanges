@@ -7,7 +7,7 @@ import com.aiwsolutions.mongo.changes.ChangeSet;
  */
 public class ChangeSet2 extends ChangeSet {
     @Override
-    public void execute() {
+    public void run() {
 
     }
 }

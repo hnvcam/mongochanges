@@ -61,7 +61,7 @@ public class ChangeSetLoader {
         return ClassUtils.convertClassNameToResourcePath(SystemPropertyUtils.resolvePlaceholders(basePackage));
     }
 
-    public List<File> loadFilesFromPath(String path) throws IOException {
+    public List<File> loadChangeSetFilesFromPath(String path) throws IOException {
         Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + path + JS_PATTERN);
         List<File> result = new ArrayList<>();
         for (Resource resource : resources) {

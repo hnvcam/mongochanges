@@ -1,6 +1,10 @@
 package com.aiwsolutions.mongo.changes;
 
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -14,44 +18,20 @@ import java.util.logging.Logger;
 public class MongoChanges {
     private static final Logger LOGGER = Logger.getLogger(MongoChanges.class.getName());
 
-    private String scriptChangeSetPath;
+    @Autowired
+    private String mongoChanges_scriptChangeSetPath;
 
-    private String javaChangeSetPath;
+    @Autowired
+    private String mongoChanges_javaChangeSetPath;
 
-    private boolean autoRun = false;
+    @Autowired
+    private Boolean mongoChanges_autoRun = true;
 
     @PostConstruct
     public void run() {
-        if (!autoRun) {
+        if (!mongoChanges_autoRun) {
             LOGGER.info("Auto running is disabled.");
             return;
         }
-    }
-
-    public boolean isAutoRun() {
-        return autoRun;
-    }
-
-    public MongoChanges setAutoRun(boolean autoRun) {
-        this.autoRun = autoRun;
-        return this;
-    }
-
-    public String getJavaChangeSetPath() {
-        return javaChangeSetPath;
-    }
-
-    public MongoChanges setJavaChangeSetPath(String javaChangeSetPath) {
-        this.javaChangeSetPath = javaChangeSetPath;
-        return this;
-    }
-
-    public String getScriptChangeSetPath() {
-        return scriptChangeSetPath;
-    }
-
-    public MongoChanges setScriptChangeSetPath(String scriptChangeSetPath) {
-        this.scriptChangeSetPath = scriptChangeSetPath;
-        return this;
     }
 }
