@@ -1,6 +1,5 @@
 package com.aiwsolutions.mongo.changes;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
