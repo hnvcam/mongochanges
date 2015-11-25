@@ -1,19 +1,14 @@
 package com.aiwsolutions.mongo.changes.runner;
 
+import com.aiwsolutions.mongo.changes.ChangeSetExecutionException;
 import com.mongodb.client.MongoDatabase;
-import org.bson.BsonBinaryReader;
-import org.bson.BsonDocumentReader;
-import org.bson.Document;
-import org.bson.RawBsonDocument;
-import org.bson.conversions.Bson;
-import org.bson.json.JsonReader;
+import org.bson.BsonDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,24 +22,20 @@ public class BsonChangeSetRunner {
     @Autowired
     private MongoDatabase mongoChanges_database;
 
-    public void run(List<File> changeSets) {
-        changeSets.stream().forEach(file -> runFile(file));
-    }
-
-    private void runFile(File file) {
-        try {
-            Document command = Document.parse(String.join("", Files.readAllLines(file.toPath())));
-            Document result = mongoChanges_database.runCommand(command);
-            if (result.getInteger("ok", -1) != 1) {
-                LOGGER.log(Level.SEVERE, "Unable to execute change set {}", file.getName());
-                return;
+    public void run(File file) throws IOException {
+        BsonDocument command = BsonDocument.parse(String.join("", Files.readAllLines(file.toPath())));
+        BsonDocument result = mongoChanges_database.runCommand(command, BsonDocument.class);
+        if (result.containsKey("ok")) {
+            if (result.getInt32("ok").getValue() != 1) {
+                String error = result.get("writeErrors").toString();
+                LOGGER.log(Level.SEVERE, "Failed to execute change set \"{0}\": {1}",
+                        new String[]{file.getName(), error});
+                throw new ChangeSetExecutionException(file.getName(), error);
             }
-            String writeErrors = result.getString("writeErrors");
-            if (!StringUtils.isEmpty(writeErrors)) {
-                LOGGER.log(Level.SEVERE, "Change set {} was executed with errors {}", new String[]{file.getName(), writeErrors});
+        } else if (result.containsKey("n")) {
+            if (result.getInt32("n").getValue() == 0) {
+                LOGGER.log(Level.INFO, "Executed change set \"{0}\" with no changes", file.getName());
             }
-        } catch (IOException e) {
-            LOGGER.severe(e.getMessage());
         }
     }
 }

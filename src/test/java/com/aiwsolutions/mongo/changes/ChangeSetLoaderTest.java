@@ -8,10 +8,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by camhoang on 11/22/15.
@@ -24,15 +25,15 @@ public class ChangeSetLoaderTest {
 
     @Test
     public void testLoadFilesFromPath() throws IOException {
-        List<File> files = changeSetLoader.loadChangeSetFilesFromPath("changes");
+        Set<File> files = changeSetLoader.loadChangeSetFilesFromPath("changes");
         assertThat(files.size(), is(1));
-        assertThat(files.get(0).getName(), is("changeSet1.bson"));
+        assertThat(files.iterator().next().getName(), is("changeSet2.bson"));
     }
 
     @Test
     public void testLoadChangeSetClassesFromPackage() throws IOException {
-        List<Class<? extends ChangeSet>> classes = changeSetLoader.loadChangeSetClassesFromPackage("com.aiwsolutions.mongo.changes.sample");
+        Set<Class<? extends ChangeSet>> classes = changeSetLoader.loadChangeSetClassesFromPackage("com.aiwsolutions.mongo.changes.sample");
         assertThat(classes.size(), is(1));
-        assertThat(classes.get(0).getName(), is("com.aiwsolutions.mongo.changes.sample.ChangeSet2"));
+        assertThat(classes.iterator().next().getName(), is("com.aiwsolutions.mongo.changes.sample.ChangeSet1"));
     }
 }

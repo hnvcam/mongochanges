@@ -1,0 +1,10 @@
+{
+    "findandmodify": "sample",
+    "query": {
+        "status": "failed"
+    },
+    "update": {
+        "status": "ok"
+    },
+    "upsert": true
+}

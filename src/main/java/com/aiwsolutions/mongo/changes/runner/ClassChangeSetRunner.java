@@ -1,11 +1,12 @@
 package com.aiwsolutions.mongo.changes.runner;
 
 import com.aiwsolutions.mongo.changes.ChangeSet;
+import com.aiwsolutions.mongo.changes.ChangeSetExecutionException;
 import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -18,19 +19,15 @@ public class ClassChangeSetRunner {
     @Autowired
     private MongoDatabase mongoChanges_database;
 
-    public void run(List<Class<? extends ChangeSet>> classes) {
-        classes.stream().forEach(clazz -> runClass(clazz));
-    }
-
-    private void runClass(Class<? extends ChangeSet> clazz) {
+    public void run(Class<? extends ChangeSet> clazz) {
         try {
             ChangeSet instance = clazz.newInstance();
             instance.setMongoDatabase(mongoChanges_database);
             instance.run();
-        } catch (InstantiationException e) {
-            LOGGER.severe(e.getMessage());
-        } catch (IllegalAccessException e) {
-            LOGGER.severe(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Failed to execute change set \"{0}\": {1}",
+                    new String [] {clazz.getSimpleName(), e.getCause().toString()});
+            throw new ChangeSetExecutionException(clazz.getName(), e.getMessage(), e);
         }
     }
 }

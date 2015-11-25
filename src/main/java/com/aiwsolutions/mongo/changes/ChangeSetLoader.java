@@ -13,7 +13,8 @@ import org.springframework.util.SystemPropertyUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by camhoang on 11/22/15.
@@ -28,9 +29,9 @@ public class ChangeSetLoader {
 
     private MetadataReaderFactory metadataReaderFactory;
 
-    public List<Class<? extends ChangeSet>> loadChangeSetClassesFromPackage(String packageName) throws IOException {
+    public Set<Class<? extends ChangeSet>> loadChangeSetClassesFromPackage(String packageName) throws IOException {
         String path = resolveBasePackage(packageName);
-        List<Class<? extends ChangeSet>> result = new ArrayList<>();
+        Set<Class<? extends ChangeSet>> result = new HashSet<>();
         Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + path + CLASS_PATTERN);
         for (Resource resource : resources) {
             if (!resource.isReadable()) {
@@ -61,9 +62,9 @@ public class ChangeSetLoader {
         return ClassUtils.convertClassNameToResourcePath(SystemPropertyUtils.resolvePlaceholders(basePackage));
     }
 
-    public List<File> loadChangeSetFilesFromPath(String path) throws IOException {
+    public Set<File> loadChangeSetFilesFromPath(String path) throws IOException {
         Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + path + BSON_PATTERN);
-        List<File> result = new ArrayList<>();
+        Set<File> result = new HashSet<>();
         for (Resource resource : resources) {
             File file = resource.getFile();
             if (!file.isFile()) {
