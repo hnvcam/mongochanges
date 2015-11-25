@@ -3,13 +3,13 @@ package com.aiwsolutions.mongo.changes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-import java.util.SortedSet;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -25,9 +25,9 @@ public class ChangeSetLoaderTest {
 
     @Test
     public void testLoadFilesFromPath() throws IOException {
-        Set<File> files = changeSetLoader.loadChangeSetFilesFromPath("changes");
+        Set<Resource> files = changeSetLoader.loadChangeSetBsonResourcesFromPath("changes");
         assertThat(files.size(), is(1));
-        assertThat(files.iterator().next().getName(), is("changeSet2.bson"));
+        assertThat(files.iterator().next().getFilename(), is("changeSet2.bson"));
     }
 
     @Test

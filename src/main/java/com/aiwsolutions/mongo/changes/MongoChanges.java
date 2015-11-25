@@ -4,12 +4,12 @@ import com.aiwsolutions.mongo.changes.marker.ChangeSetMarker;
 import com.aiwsolutions.mongo.changes.runner.BsonChangeSetRunner;
 import com.aiwsolutions.mongo.changes.runner.ClassChangeSetRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -50,7 +50,7 @@ public class MongoChanges {
     private int skippedChangeSet = 0;
 
     @PostConstruct
-    public void autoRun() {
+    public void autoRun() throws ChangeSetExecutionException {
         if (!mongoChanges_autoRun) {
             LOGGER.info("Auto running is disabled.");
             return;
@@ -58,33 +58,35 @@ public class MongoChanges {
         executeChangeSets();
     }
 
-    public void executeChangeSets() {
+    public void executeChangeSets() throws ChangeSetExecutionException {
         reset();
         try {
             loadChangeSets();
             executeChangeSetSequentially();
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Aborted! Skipped: {}. Executed: {}. Exception: {}",
-                    new String [] {String.valueOf(skippedChangeSet), String.valueOf(executedChangeSet), Arrays.toString(e.getStackTrace())});
+            LOGGER.log(Level.SEVERE, "Aborted! Skipped: {0}. Executed: {1}. Exception: {2}",
+                    new String [] {String.valueOf(skippedChangeSet), String.valueOf(executedChangeSet), e.getMessage()});
+            throw new ChangeSetExecutionException(e.getMessage(), e);
         }
     }
 
-    private void executeChangeSetSequentially() throws IOException {
+    private void executeChangeSetSequentially() throws IOException, ChangeSetExecutionException {
         for (Map.Entry<String, Object> entry : changeSets.entrySet()) {
             String changeSetName = entry.getKey();
             if (changeSetMarker.start(changeSetName)) {
                 Object changeSet = entry.getValue();
                 try {
-                    if (changeSet instanceof File) {
-                        bsonChangeSetRunner.run((File) changeSet);
+                    if (changeSet instanceof Resource) {
+                        bsonChangeSetRunner.run((Resource) changeSet);
                     } else {
                         classChangeSetRunner.run((Class<? extends ChangeSet>) changeSet);
                     }
                     changeSetMarker.end(changeSetName);
                     executedChangeSet++;
                 } catch (ChangeSetExecutionException e) {
-                    LOGGER.log(Level.SEVERE, "Failed to execute change set \"{0}\" with error {1}", new String [] { changeSetName, e.getError()});
+                    LOGGER.log(Level.SEVERE, "Failed to execute change set \"{0}\" with error {1}", new String[]{changeSetName, e.getError()});
                     changeSetMarker.clear(changeSetName);
+                    throw e;
                 }
             } else {
                 skippedChangeSet++;
@@ -97,9 +99,9 @@ public class MongoChanges {
                 .stream()
                 .forEachOrdered(clazz -> changeSets.put(clazz.getSimpleName(), clazz));
 
-        changeSetLoader.loadChangeSetFilesFromPath(mongoChanges_scriptChangeSetPath)
+        changeSetLoader.loadChangeSetBsonResourcesFromPath(mongoChanges_scriptChangeSetPath)
                 .stream()
-                .forEachOrdered(file -> changeSets.put(file.getName(), file));
+                .forEachOrdered(resource -> changeSets.put(resource.getFilename(), resource));
 
         LOGGER.log(Level.INFO, "Loaded {0} change sets", changeSets.size());
     }

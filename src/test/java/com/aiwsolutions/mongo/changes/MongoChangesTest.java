@@ -19,7 +19,7 @@ public class MongoChangesTest {
     private MongoChanges mongoChanges;
 
     @Test
-    public void testAutoRun() {
+    public void testAutoRun() throws ChangeSetExecutionException {
         assertThat(mongoChanges.getExecutedChangeSet(), is(2));
         assertThat(mongoChanges.getSkippedChangeSet(), is(0));
 

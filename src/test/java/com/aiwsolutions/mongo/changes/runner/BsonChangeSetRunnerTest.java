@@ -1,11 +1,15 @@
 package com.aiwsolutions.mongo.changes.runner;
 
+import com.aiwsolutions.mongo.changes.ChangeSetExecutionException;
 import com.aiwsolutions.mongo.changes.TestConfiguration;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.FileSystemResourceLoader;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -31,11 +35,11 @@ public class BsonChangeSetRunnerTest {
     private MongoDatabase mongoChanges_database;
 
     @Test
-    public void testRun() throws URISyntaxException, IOException {
+    public void testRun() throws URISyntaxException, IOException, ChangeSetExecutionException {
         mongoChanges_database.getCollection("sample").insertOne(new Document("status", "failed"));
         assertThat(mongoChanges_database.getCollection("sample").count(), is(1l));
 
-        bsonChangeSetRunner.run(new File(ClassLoader.getSystemResource("changes/changeSet2.bson").toURI()));
+        bsonChangeSetRunner.run(new FileSystemResource(new File(ClassLoader.getSystemResource("changes/changeSet2.bson").toURI())));
 
         Document document = mongoChanges_database.getCollection("sample").find().first();
         assertThat(document.get("status"), is("ok"));

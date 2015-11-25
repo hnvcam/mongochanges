@@ -18,5 +18,5 @@ public abstract class ChangeSet {
         return this;
     }
 
-    public abstract void run();
+    public abstract void run() throws ChangeSetExecutionException;
 }

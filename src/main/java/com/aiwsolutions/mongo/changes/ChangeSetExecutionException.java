@@ -3,23 +3,16 @@ package com.aiwsolutions.mongo.changes;
 /**
  * Created by choang on 11/25/15.
  */
-public class ChangeSetExecutionException extends RuntimeException {
-    private String name;
+public class ChangeSetExecutionException extends Exception {
     private String error;
 
-    public ChangeSetExecutionException(String name, String error) {
-        this.name = name;
+    public ChangeSetExecutionException(String error) {
         this.error = error;
     }
 
-    public ChangeSetExecutionException(String name, String error, Throwable cause) {
+    public ChangeSetExecutionException(String error, Throwable cause) {
         super(error, cause);
-        this.name = name;
         this.error = error;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getError() {

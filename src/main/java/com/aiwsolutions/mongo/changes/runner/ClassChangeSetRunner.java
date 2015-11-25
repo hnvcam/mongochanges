@@ -19,7 +19,7 @@ public class ClassChangeSetRunner {
     @Autowired
     private MongoDatabase mongoChanges_database;
 
-    public void run(Class<? extends ChangeSet> clazz) {
+    public void run(Class<? extends ChangeSet> clazz) throws ChangeSetExecutionException {
         try {
             ChangeSet instance = clazz.newInstance();
             instance.setMongoDatabase(mongoChanges_database);
@@ -27,7 +27,7 @@ public class ClassChangeSetRunner {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to execute change set \"{0}\": {1}",
                     new String [] {clazz.getSimpleName(), e.getCause().toString()});
-            throw new ChangeSetExecutionException(clazz.getName(), e.getMessage(), e);
+            throw new ChangeSetExecutionException(e.getMessage(), e);
         }
     }
 }

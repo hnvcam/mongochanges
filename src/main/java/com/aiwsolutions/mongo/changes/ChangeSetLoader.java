@@ -62,15 +62,14 @@ public class ChangeSetLoader {
         return ClassUtils.convertClassNameToResourcePath(SystemPropertyUtils.resolvePlaceholders(basePackage));
     }
 
-    public Set<File> loadChangeSetFilesFromPath(String path) throws IOException {
+    public Set<Resource> loadChangeSetBsonResourcesFromPath(String path) throws IOException {
         Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + path + BSON_PATTERN);
-        Set<File> result = new HashSet<>();
+        Set<Resource> result = new HashSet<>();
         for (Resource resource : resources) {
-            File file = resource.getFile();
-            if (!file.isFile()) {
+            if (!resource.isReadable()) {
                 continue;
             }
-            result.add(file);
+            result.add(resource);
         }
         return result;
     }

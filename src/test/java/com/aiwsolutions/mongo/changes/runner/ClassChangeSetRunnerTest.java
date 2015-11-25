@@ -1,6 +1,7 @@
 package com.aiwsolutions.mongo.changes.runner;
 
 import com.aiwsolutions.mongo.changes.ChangeSet;
+import com.aiwsolutions.mongo.changes.ChangeSetExecutionException;
 import com.aiwsolutions.mongo.changes.TestConfiguration;
 import com.aiwsolutions.mongo.changes.sample.ChangeSet1;
 import com.mongodb.client.MongoDatabase;
@@ -43,7 +44,7 @@ public class ClassChangeSetRunnerTest {
     }
 
     @Test
-    public void testRun() {
+    public void testRun() throws ChangeSetExecutionException {
         assertThat(mongoChanges_database.getCollection(ChangeSet0.CHANGE_SET_COLLECTION).count(), is(0l));
 
         classChangeSetRunner.run(ChangeSet0.class);

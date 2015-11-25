@@ -13,16 +13,16 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MongoChangesConfig {
-    @Value("${mongo.changes.script.path}")
+    @Value("${mongo.changes.script.path:changeset}")
     private String scriptPath;
 
     @Value("${mongo.changes.class.path}")
     private String classPath;
 
-    @Value("${mongo.changes.autorun}")
+    @Value("${mongo.changes.autorun:true}")
     private String autoRun;
 
-    @Value("${mongo.changes.client.bean.name}")
+    @Value("${mongo.changes.client.bean.name:mongoClient}")
     private String clientName;
 
     @Value("${mongo.changes.database.name}")

@@ -1,10 +1,15 @@
 {
-    "findandmodify": "sample",
-    "query": {
+  "description": "changeSet2",
+  "commands": [
+    {
+      "findandmodify": "sample",
+      "query": {
         "status": "failed"
-    },
-    "update": {
+      },
+      "update": {
         "status": "ok"
-    },
-    "upsert": true
+      },
+      "upsert": true
+    }
+  ]
 }
