@@ -20,7 +20,7 @@ import java.util.*;
  */
 @Component
 public class ChangeSetLoader {
-    private static final String JS_PATTERN = "/**/*.js";
+    private static final String BSON_PATTERN = "/**/*.bson";
     private static final String CLASS_PATTERN = "/**/*.class";
 
     @Autowired
@@ -62,7 +62,7 @@ public class ChangeSetLoader {
     }
 
     public List<File> loadChangeSetFilesFromPath(String path) throws IOException {
-        Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + path + JS_PATTERN);
+        Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + path + BSON_PATTERN);
         List<File> result = new ArrayList<>();
         for (Resource resource : resources) {
             File file = resource.getFile();

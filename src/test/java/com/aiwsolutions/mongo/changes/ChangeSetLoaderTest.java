@@ -26,7 +26,7 @@ public class ChangeSetLoaderTest {
     public void testLoadFilesFromPath() throws IOException {
         List<File> files = changeSetLoader.loadChangeSetFilesFromPath("changes");
         assertThat(files.size(), is(1));
-        assertThat(files.get(0).getName(), is("changeSet1.js"));
+        assertThat(files.get(0).getName(), is("changeSet1.bson"));
     }
 
     @Test

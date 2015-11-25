@@ -16,7 +16,7 @@ public class ClassChangeSetRunner {
     private static final Logger LOGGER = Logger.getLogger(ClassChangeSetRunner.class.getName());
 
     @Autowired
-    MongoDatabase mongoDatabase;
+    private MongoDatabase mongoChanges_database;
 
     public void run(List<Class<? extends ChangeSet>> classes) {
         classes.stream().forEach(clazz -> runClass(clazz));
@@ -25,7 +25,7 @@ public class ClassChangeSetRunner {
     private void runClass(Class<? extends ChangeSet> clazz) {
         try {
             ChangeSet instance = clazz.newInstance();
-            instance.setMongoDatabase(mongoDatabase);
+            instance.setMongoDatabase(mongoChanges_database);
             instance.run();
         } catch (InstantiationException e) {
             LOGGER.severe(e.getMessage());

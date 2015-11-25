@@ -1,5 +1,6 @@
 package com.aiwsolutions.mongo.changes;
 
+import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,7 +21,6 @@ public class TestConfiguration {
 
     @Bean
     public MongoClient mongoClient() {
-        return new MongoClient();
+        return new Fongo("test").getMongo();
     }
-
 }

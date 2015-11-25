@@ -1,9 +1,12 @@
 package com.aiwsolutions.mongo.changes.runner;
 
-import com.mongodb.Mongo;
 import com.mongodb.client.MongoDatabase;
+import org.bson.BsonBinaryReader;
+import org.bson.BsonDocumentReader;
 import org.bson.Document;
 import org.bson.RawBsonDocument;
+import org.bson.conversions.Bson;
+import org.bson.json.JsonReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -18,8 +21,8 @@ import java.util.logging.Logger;
  * Created by camhoang on 11/23/15.
  */
 @Component
-public class JSChangeSetRunner {
-    private static final Logger LOGGER = Logger.getLogger(JSChangeSetRunner.class.getName());
+public class BsonChangeSetRunner {
+    private static final Logger LOGGER = Logger.getLogger(BsonChangeSetRunner.class.getName());
 
     @Autowired
     private MongoDatabase mongoChanges_database;
@@ -30,15 +33,15 @@ public class JSChangeSetRunner {
 
     private void runFile(File file) {
         try {
-            RawBsonDocument rawBsonDocument = new RawBsonDocument(Files.readAllBytes(file.toPath()));
-            Document result = mongoChanges_database.runCommand(rawBsonDocument);
+            Document command = Document.parse(String.join("", Files.readAllLines(file.toPath())));
+            Document result = mongoChanges_database.runCommand(command);
             if (result.getInteger("ok", -1) != 1) {
                 LOGGER.log(Level.SEVERE, "Unable to execute change set {}", file.getName());
                 return;
             }
             String writeErrors = result.getString("writeErrors");
             if (!StringUtils.isEmpty(writeErrors)) {
-                LOGGER.log(Level.SEVERE, "Change set {} was executed with errors {}", new String[] {file.getName(), writeErrors});
+                LOGGER.log(Level.SEVERE, "Change set {} was executed with errors {}", new String[]{file.getName(), writeErrors});
             }
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
